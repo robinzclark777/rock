@@ -15,23 +15,26 @@ function getComputerChoice() {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function playRound(playerSelection, computerSelection) {
+let computerScore = 0;
+let personScore = 0;
+let tieScore = 0;
+let results = "";
+
+function playRound(playerSelection) {
   playerSelection = playerSelection.toLowerCase();
-  computerSelection = computerSelection.toLowerCase();
+  computerSelection = getComputerChoice();
   let s = playerSelection + computerSelection;
-  let v = retValue.get(s);
-  return retValue.get(playerSelection + computerSelection);
+  results = retValue.get(playerSelection + computerSelection);
+  roundResults(results);
+  if (computerScore == 5 || personScore == 5 || tieScore == 5) {
+    gameResults();
+    personScore = 0;
+    tieScore = 0;
+    computerScore = 0;
+  }
 }
 
-computerScore = 0;
-personScore = 0;
-tieScore = 0;
-
-for (i = 0; i < 5; i++) {
-  player = prompt("Rock, Paper, or Scissors?");
-  results = playRound(player, getComputerChoice());
-
-  console.log(results);
+function roundResults(results) {
   if (results.includes("lose")) {
     computerScore++;
   } else if (results.includes("win")) {
@@ -39,15 +42,42 @@ for (i = 0; i < 5; i++) {
   } else {
     tieScore++;
   }
-}
-if (personScore > computerScore) {
-  console.log("You won big!");
-} else if (computerScore > personScore) {
-  console.log("You lose big!");
-} else {
-  console.log("A tie!");
+  round.textContent = `${results} ... computerScore: ${computerScore} ... personScore: ${personScore} ... tieScore: ${tieScore}`;
 }
 
-console.log(`Your score: ${personScore}`);
-console.log(`Computer Score: ${computerScore}`);
-console.log(`Ties: ${tieScore}`);
+function gameResults() {
+  let gameResult = "";
+  if (personScore > computerScore) {
+    gameResult = "You won big!";
+  } else if (computerScore > personScore) {
+    gameResult = "You lose big!";
+  } else {
+    gameResult = "A tie!";
+  }
+  game.textContent = `${gameResult} ... computerScore: ${computerScore} ... personScore: ${personScore} ... tieScore: ${tieScore}`;
+}
+
+const container = document.querySelector("#container");
+const round = document.createElement("div");
+round.classList.add("round");
+container.appendChild(round);
+
+const game = document.createElement("div");
+game.classList.add("game");
+container.appendChild(game);
+
+const btnRock = document.querySelector("#rock");
+btnRock.addEventListener("click", () => {
+  playRound("Rock");
+  content.textContent = results;
+});
+
+const btnPaper = document.querySelector("#paper");
+btnPaper.addEventListener("click", () => {
+  playRound("Paper");
+});
+
+const btnScissors = document.querySelector("#scissors");
+btnScissors.addEventListener("click", () => {
+  playRound("Scissors");
+});
